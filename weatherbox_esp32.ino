@@ -289,7 +289,7 @@ void i2c_receive(int len) {
 
   byte buf[w.packet_size];
   size_t i = 0;
-  while(Wire.available()) {
+  while (Wire.available()) {
     buf[i++] = Wire.read();
   }
 
@@ -312,27 +312,23 @@ void i2c_receive(int len) {
 }
 
 void wifi_disconnected(WiFiEvent_t event, arduino_event_info_t info) {
-  Serial.println("Disconnected from WIFI access point");
-  Serial.printf("Reason: %s\n", info.wifi_sta_disconnected.reason);
-  Serial.println("Reconnecting...");
-  WiFi.begin(ssid, password);
+  WiFi.reconnect();
 }
 
 void setup() {
   Serial.begin(115200);
+  setCpuFrequencyMhz(80);
 
   Wire.begin(I2C_ADDRESS_ESP32);
   Wire.onReceive(i2c_receive);
 
   WiFi.mode(WIFI_STA);
-  //WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname);
-  WiFi.onEvent(wifi_disconnected, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi...");
 
   int counter = 0;
-  while(WiFi.waitForConnectResult() != WL_CONNECTED && counter++ < 10) {
+  while (WiFi.waitForConnectResult() != WL_CONNECTED && counter++ < 60) {
     Serial.print(".");
     delay(1000);
   }
@@ -347,6 +343,8 @@ void setup() {
   Serial.println(WiFi.RSSI());
   Serial.print("IP: ");
   Serial.println(WiFi.localIP());
+
+  WiFi.onEvent(wifi_disconnected, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
   configTime(0, 0, "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org");
   struct tm t;
