@@ -13,7 +13,7 @@ static SemaphoreHandle_t wmutex;
 
 // WiFi stuff
 static const char *ssid = "wireless fidelity";
-static const char *password = "trial by fire";
+static const char *password = "trial by fire";  // I don't care who knows this.
 static const char *hostname = "weatherbox";
 static const int refresh_rate = 1800;  // In seconds
 WiFiServer server(80);
