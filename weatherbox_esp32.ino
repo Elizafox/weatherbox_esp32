@@ -315,7 +315,7 @@ void setup() {
     delay(1000);
   }
 
-  if (counter == 10) {
+  if (counter == 60) {
     Serial.println("Failed to connect, rebooting!");
     ESP.restart();
   }
