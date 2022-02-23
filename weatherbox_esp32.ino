@@ -139,26 +139,8 @@ void client_send_api(WiFiClient& client) {
   // We're working with the weather structure, take the mutex
   xSemaphoreTake(wmutex, portMAX_DELAY);
 
-  DynamicJsonDocument doc(1024);
-  JsonObject td = doc.createNestedObject("time");
-  td["year"] = w.get_year();
-  td["month"] = w.get_month();
-  td["day"] = w.get_day();
-  td["hour"] = w.get_hour();
-  td["minute"] = w.get_minute();
-  td["second"] = w.get_second();
-  td["msec"] = w.get_msec();
-  JsonObject wd = doc.createNestedObject("weather");
-  wd["temperature"] = w.get_temperature();
-  wd["humidity"] = w.get_humidity();
-  wd["pressure"] = w.get_pressure();
-  wd["aqi"] = w.get_aqi();
-  wd["co2e"] = w.get_co2e();
-  wd["breath_voce"] = w.get_breath_voce();
-  wd["uv"] = w.get_uv();
-  wd["wind"] = w.get_wind();
-  wd["wind_direction"] = w.get_wind_direction();
-  wd["rainfall_per_hour"] = w.get_rainfall_per_hour();
+  String data;
+  w.to_json(data);
 
   // Give up the mutex
   xSemaphoreGive(wmutex);
@@ -170,8 +152,8 @@ void client_send_api(WiFiClient& client) {
   client.print("Refresh: "); client.println(refresh_rate);
   client.println("Connection: close");
   client.println();
-  serializeJson(doc, client);
-  client.println("\n");
+  client.print(data);
+  client.println();
 }
 
 void client_send_favicon(WiFiClient& client) {
